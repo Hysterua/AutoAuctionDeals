@@ -75,6 +75,10 @@ df_filtered = df.loc[(df['KW Per Ton'] >= 110) & (df['# of KMS'] <= 200000) & (d
 
 print("Applying Filters and Saving the DF\n")
 
-df_filtered.to_csv("car_data_GPT.csv", index=False)
+if not df_filtered.empty:
+  df_filtered.to_html("filtered_cars.html", index=False, border=1)
+else:
+  with open("filtered_cars.html", "w") as f:
+    f.write("No cars found matching the criteria.")
 
 print("Done!\n")
