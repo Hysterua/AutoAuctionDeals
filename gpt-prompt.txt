@@ -54,6 +54,7 @@ kw for each (as an integer) and the cars weight in kg (as an integer).
     * `"Lowest Price from the Price Guide"`: The lower bound of the retail price guide as a **string representing an integer** (without the "$" sign).
     * `"KW"`: The power output in kilowatts as an **integer**.
     * `"Weight"`: The weight of the car in kilograms as an **integer**.
+    * `"URL"`: The original url of the car as a full **string**.
 
 LIST
 This is the list:

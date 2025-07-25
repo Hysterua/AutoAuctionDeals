@@ -30,13 +30,13 @@ jobs:
       - name: Run Python script and save output
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python main.py | tee python-output.txt
+        run: python main.py
 
-      - name: Upload output as artifact
+      - name: Upload Filtered Car Data CSV
         uses: actions/upload-artifact@v4
         with:
-          name: python-output-artifact
-          path: python-output.txt
+          name: filtered-car-data
+          path: car_data_GPT.csv
 
   send-notification:
     needs: run-script
