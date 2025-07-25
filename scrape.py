@@ -3,10 +3,10 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import re
 import numpy as np
+from urllib.parse import urljoin # <-- Import urljoin for safety
 
 def makeCarDF(websiteURL):
     x = requests.get(websiteURL)
-
     soup = BeautifulSoup(x.text, 'lxml')
     gv_vehicles = soup.find(id='gvVehicles')
     rows = gv_vehicles.findAll('tr')
@@ -16,12 +16,12 @@ def makeCarDF(websiteURL):
     car_details_make = []
     car_details_klm = []
     car_details_transmission = []
+    car_details_links = [] # <-- Add a new list for links
 
     for row in rows:
         cells = row.find_all('td')
         
         if len(cells) > 2:
-
             # Extract image URL
             img_tag = cells[0].find('img')
             image_url = img_tag['src'] if img_tag else ''
@@ -30,6 +30,16 @@ def makeCarDF(websiteURL):
             if image_url == 'images/blank.jpg':
                 continue
 
+            # --- Find the link tag and construct the full URL ---
+            link_tag = cells[2].find('a')
+            if link_tag and link_tag.has_attr('href'):
+                relative_url = link_tag['href']
+                # Join the base URL with the relative path
+                full_url = urljoin(websiteURL, relative_url)
+                car_details_links.append(full_url)
+            else:
+                car_details_links.append("N/A") # Append a placeholder if no link is found
+
             # Extract vehicle name
             strong_tag = cells[2].find('strong')
             vehicle_name = strong_tag.string.strip()
@@ -37,7 +47,7 @@ def makeCarDF(websiteURL):
 
             car_details_date.append(date)
             
-            # Extract vehicle details 
+            # Extract vehicle details
             vehicle_details_parts = [part.strip() for part in cells[2].strings if part.strip()]
             vehicle_details = ' '.join(vehicle_details_parts)
             vehicle_details = vehicle_details[-1 + len(vehicle_name) + 1:]
@@ -55,8 +65,7 @@ def makeCarDF(websiteURL):
             else:
                 car_details_make.append(a[2])
             
-            # Find the transmission 
-
+            # Find the transmission
             if re.search(r' AUTO ', vehicle_details) or re.search(r' AUTOMATIC ', vehicle_details) or re.search(r' AUTOMATED ', vehicle_details):
                 car_details_transmission.append("Automatic")
             elif re.search(r' MANUAL ', vehicle_details):
@@ -81,11 +90,10 @@ def makeCarDF(websiteURL):
         'Production': car_details_date,
         'Transmission': car_details_transmission,
         'KM': car_details_klm,
+        'Link': car_details_links, # <-- Add the links to the DataFrame
     }
     df = pd.DataFrame(data)
     df['index_col'] = df.index
-
-    # df.to_csv("car_data.csv", index=False)
     
     # Split the table
     chunk_size = 50
@@ -93,4 +101,3 @@ def makeCarDF(websiteURL):
     chunks = [df.iloc[i*chunk_size:(i+1)*chunk_size] for i in range(num_chunks)]
 
     return chunks
-#df.to_json(orient='records')
