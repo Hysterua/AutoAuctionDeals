@@ -28,7 +28,9 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run Python script and save output
-        run: python main.py > python-output.txt
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python main.py | tee python-output.txt
 
       - name: Upload output as artifact
         uses: actions/upload-artifact@v4
