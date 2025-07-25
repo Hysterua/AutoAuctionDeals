@@ -1,0 +1,54 @@
+name: Python Script CI
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    outputs:
+      status: ${{ job.status }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Run Python script and save output
+        run: python main.py > python-output.txt
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-output-artifact
+          path: python-output.txt
+
+  send-notification:
+    needs: run-script
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download output artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: python-output-artifact
+
+      - name: Read Python script output
+        id: script-output
+        run: echo "output_body=$(cat python-output.txt)" >> $GITHUB_OUTPUT
+
+      # - name: Send email with script output
+      #   uses: dawidd6/action-send-mail@v3
+      #   with:
+      #     server_address: ${{ secrets.SMTP_SERVER }}
+      #     server_port: ${{ secrets.SMTP_PORT }}
+      #     username: ${{ secrets.SMTP_USERNAME }}
+      #     password: ${{ secrets.SMTP_PASSWORD }}
+      #     subject: 'GitHub Actions Report: ${{ github.repository }} - ${{ needs.run-script.outputs.status }}'
+      #     to: user@example.com
+      #     from: GitHub Actions <actions@github.com>
+      #     # This line is changed to only include the script output
+      #     body: ${{ steps.script-output.outputs.output_body }}
