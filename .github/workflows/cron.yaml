@@ -60,7 +60,7 @@ jobs:
           username: ${{ secrets.SMTP_USERNAME }}
           password: ${{ secrets.SMTP_PASSWORD }}
           subject: 'Auto Auction Deals Report (${{ needs.run-script.outputs.status }}) - ${{ job.status }}'
-          to: user@example.com
+          to: ${{ secrets.EMAIL_TO }}
           from: GitHub Actions <actions@github.com>
           content_type: html # <-- Set content type to HTML
           body: ${{ steps.email-body.outputs.body }} # <-- Use the HTML content as the body
