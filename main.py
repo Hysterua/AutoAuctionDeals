@@ -10,7 +10,7 @@ load_dotenv()
 
 carAuctionURL = 'https://www.auto-auctions.com.au/search_results.aspx?sitekey=AAV&make=All%20Makes&model=All%20Models&keyword=&fromyear=From%20Any&toyear=To%20Any&body=All%20Body%20Types'
 genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
-model = genai.GenerativeModel('gemini-2.5-pro-preview-03-25')
+model = genai.GenerativeModel('gemini-2.5-pro')
 
 carChunks = makeCarDF(carAuctionURL)
 
