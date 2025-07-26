@@ -5,13 +5,11 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 # --- Get variables from environment ---
-# These are set in the GitHub Actions workflow file
 smtp_server = os.environ.get("SMTP_SERVER")
 smtp_port = int(os.environ.get("SMTP_PORT", 587))
 smtp_username = os.environ.get("SMTP_USERNAME")
 smtp_password = os.environ.get("SMTP_PASSWORD")
 to_email = os.environ.get("TO_EMAIL")
-from_name = "GitHub Actions"
 
 # --- Read the HTML file ---
 html_content = ""
@@ -34,10 +32,11 @@ message.attach(MIMEText(html_content, "html"))
 try:
     print("Connecting to SMTP server...")
     with smtplib.SMTP(smtp_server, smtp_port) as server:
-        server.starttls()  # Secure the connection
+        server.starttls()
         server.login(smtp_username, smtp_password)
-        server.sendmail(smtp_username, to_email, message.as_string())
+        # This line has been corrected to use a list for the recipient
+        server.sendmail(smtp_username, [to_email], message.as_string())
     print("Email sent successfully!")
 except Exception as e:
     print(f"Error sending email: {e}")
-    exit(1) # Exit with an error code to fail the workflow step
+    exit(1)
