@@ -36,7 +36,7 @@ jobs:
         id: email-body
         run: |
           echo "html<<EOF" >> $GITHUB_OUTPUT
-          cat generated.html >> $GITHUB_OUTPUT
+          cat filtered_cars.html >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
         # Send the email with the HTML content
