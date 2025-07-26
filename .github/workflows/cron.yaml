@@ -38,33 +38,33 @@ jobs:
           name: filtered-car-data
           path: filtered_cars.html
 
-  send-notification:
-    needs: run-script
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download output artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: filtered-car-data
+  # send-notification:
+  #   needs: run-script
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Download output artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: filtered-car-data
       
-      - name: Read HTML file content
-        id: email-body
-        run: |
-          delimiter=$(openssl rand -hex 8)
-          echo "body<<$delimiter" >> $GITHUB_OUTPUT
-          cat filtered_cars.html >> $GITHUB_OUTPUT
-          echo "$delimiter" >> $GITHUB_OUTPUT
+  #     - name: Read HTML file content
+  #       id: email-body
+  #       run: |
+  #         delimiter=$(openssl rand -hex 8)
+  #         echo "body<<$delimiter" >> $GITHUB_OUTPUT
+  #         cat filtered_cars.html >> $GITHUB_OUTPUT
+  #         echo "$delimiter" >> $GITHUB_OUTPUT
 
-        # Send the email with the HTML content
-      - name: Send email notification
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: ${{ secrets.SMTP_SERVER }}
-          server_port: ${{ secrets.SMTP_PORT }}
-          username: ${{ secrets.SMTP_USERNAME }}
-          password: ${{ secrets.SMTP_PASSWORD }}
-          subject: 'Auto Auction Deals Report (${{ needs.run-script.outputs.status }}) - ${{ job.status }}'
-          to: ${{ secrets.EMAIL_TO }}
-          from: GitHub Actions <actions@github.com>
-          content_type: html # <-- Set content type to HTML
-          body: ${{ steps.email-body.outputs.body }} # <-- Use the HTML content as the body
+  #       # Send the email with the HTML content
+  #     - name: Send email notification
+  #       uses: dawidd6/action-send-mail@v3
+  #       with:
+  #         server_address: ${{ secrets.SMTP_SERVER }}
+  #         server_port: ${{ secrets.SMTP_PORT }}
+  #         username: ${{ secrets.SMTP_USERNAME }}
+  #         password: ${{ secrets.SMTP_PASSWORD }}
+  #         subject: 'Auto Auction Deals Report (${{ needs.run-script.outputs.status }}) - ${{ job.status }}'
+  #         to: ${{ secrets.EMAIL_TO }}
+  #         from: GitHub Actions <actions@github.com>
+  #         content_type: html # <-- Set content type to HTML
+  #         body: ${{ steps.email-body.outputs.body }} # <-- Use the HTML content as the body
