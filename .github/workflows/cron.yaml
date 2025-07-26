@@ -55,9 +55,8 @@ jobs:
           server_port: ${{ secrets.SMTP_PORT }}
           username: ${{ secrets.SMTP_USERNAME }}
           password: ${{ secrets.SMTP_PASSWORD }}
-          subject: 'Auto Auction Deals Report (${{ needs.run-script.outputs.status }}) - ${{ job.status }}'
+          subject: 'Jakes Cool Auto Auction Deals Report - (${{ needs.run-script.outputs.status }})'
           to: ${{ secrets.EMAIL_TO }}
-          from: GitHub Actions <actions@github.com>
-          content_type: html # <-- Set content type to HTML
+          from: Jakes GitHub Actions <actions@github.com>
           html_body: file://filtered_cars.html
 
