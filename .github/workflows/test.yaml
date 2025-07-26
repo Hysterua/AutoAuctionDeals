@@ -35,7 +35,7 @@ jobs:
       - name: Download Car Data HTML
         uses: actions/download-artifact@v4
         with:
-          name: filtered-car-data-html
+          name: filtered-car-data
 
       # Step 3: Send the email using the Python script
       - name: Send email report
