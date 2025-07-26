@@ -32,6 +32,11 @@ jobs:
         with:
           name: filtered-car-data
       
+      - name: Debug file system
+        run: |
+          echo "Listing all files in the current directory:"
+          ls -R
+
       - name: Read HTML file content
         id: email-body
         run: |
