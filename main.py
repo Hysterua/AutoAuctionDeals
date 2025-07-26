@@ -80,9 +80,9 @@ if not df_filtered.empty:
     df_filtered['URL'] = df_filtered['URL'].apply(lambda url: f'<a href="{url}">Link</a>')
 
 if not df_filtered.empty:
-  df_filtered.to_html("filtered_cars.html", index=False, border=1)
+    df_filtered.to_html("filtered_cars.html", index=False, border=1, escape=False)
 else:
-  with open("filtered_cars.html", "w") as f:
-    f.write("No cars found matching the criteria.")
+    with open("filtered_cars.html", "w") as f:
+        f.write("No cars found matching the criteria.")
 
 print("Done!\n")

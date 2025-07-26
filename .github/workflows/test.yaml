@@ -27,33 +27,24 @@ jobs:
     needs: run-script
     runs-on: ubuntu-latest
     steps:
-      - name: Download output artifact
+      # Step 1: Check out the repository to get the send_email.py script
+      - name: Check out repository
+        uses: actions/checkout@v4
+        
+      # Step 2: Download the HTML report artifact
+      - name: Download Car Data HTML
         uses: actions/download-artifact@v4
         with:
-          name: filtered-car-data
-      
-      - name: Debug file system
-        run: |
-          echo "Listing all files in the current directory:"
-          ls -R
+          name: filtered-car-data-html
 
-      - name: Read HTML file content
-        id: email-body
-        run: |
-          echo "html<<EOF" >> $GITHUB_OUTPUT
-          cat filtered_cars.html >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+      # Step 3: Send the email using the Python script
+      - name: Send email report
+        env:
+          # Set credentials and info as environment variables
+          SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          TO_EMAIL: ${{ secrets.TO_EMAIL }}
+        run: python send_email.py
 
-        # Send the email with the HTML content
-      - name: Send email notification
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: ${{ secrets.SMTP_SERVER }}
-          server_port: ${{ secrets.SMTP_PORT }}
-          username: ${{ secrets.SMTP_USERNAME }}
-          password: ${{ secrets.SMTP_PASSWORD }}
-          subject: 'Auto Auction Deals Report (${{ needs.run-script.outputs.status }}) - ${{ job.status }}'
-          to: ${{ secrets.EMAIL_TO }}
-          from: GitHub Actions <actions@github.com>
-          content_type: html # <-- Set content type to HTML
-          body: ${{ steps.email-body.outputs.body }} # <-- Use the HTML content as the body
