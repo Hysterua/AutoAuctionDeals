@@ -24,7 +24,7 @@ except FileNotFoundError:
 # --- Construct the email ---
 message = MIMEMultipart("alternative")
 message["Subject"] = "Auto Auction Deals Report"
-message["From"] = f"{from_name} <{smtp_username}>"
+message["From"] = smtp_username
 message["To"] = to_email
 
 # Attach the HTML content
