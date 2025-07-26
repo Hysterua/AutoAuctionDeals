@@ -75,6 +75,10 @@ df_filtered = df.loc[(df['KW Per Ton'] >= 110) & (df['# of KMS'] <= 200000) & (d
 
 print("Applying Filters and Saving the DF\n")
 
+# --- OPTIONAL: Convert URLs to clickable HTML links ---
+if not df_filtered.empty:
+    df_filtered['URL'] = df_filtered['URL'].apply(lambda url: f'<a href="{url}">Link</a>')
+
 if not df_filtered.empty:
   df_filtered.to_html("filtered_cars.html", index=False, border=1)
 else:
