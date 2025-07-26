@@ -1,0 +1,54 @@
+name: Test Yaml
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-script:
+    outputs:
+      status: ${{ job.status }}
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out your repository's code.
+      # This is required so the workflow can access the files within it.
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # Step 2: Upload the 'filtered_cars.html' file from your repo.
+      # The 'path' now points to the specific file you want to upload.
+      - name: Upload HTML report as an artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: filtered-car-data
+          path: filtered_cars.html
+
+  send-notification:
+    needs: upload-report-file
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download output artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: filtered-car-data
+      
+      - name: Read HTML file content
+        id: email-body
+        run: |
+          echo "html<<EOF" >> $GITHUB_OUTPUT
+          cat generated.html >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+        # Send the email with the HTML content
+      - name: Send email notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_SERVER }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: 'Auto Auction Deals Report (${{ needs.run-script.outputs.status }}) - ${{ job.status }}'
+          to: ${{ secrets.EMAIL_TO }}
+          from: GitHub Actions <actions@github.com>
+          content_type: html # <-- Set content type to HTML
+          body: ${{ steps.email-body.outputs.body }} # <-- Use the HTML content as the body
