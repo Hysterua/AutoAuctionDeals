@@ -24,7 +24,7 @@ jobs:
           path: filtered_cars.html
 
   send-notification:
-    needs: upload-report-file
+    needs: run-script
     runs-on: ubuntu-latest
     steps:
       - name: Download output artifact
