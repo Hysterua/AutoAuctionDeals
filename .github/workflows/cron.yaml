@@ -8,7 +8,7 @@ on:
     # This runs at 4:00 AM UTC on Monday, Wednesday, and Friday.
     # This corresponds to 2:00 PM Sydney time during AEST (UTC+10).
     # NOTE: During daylight saving (AEDT, UTC+11), this will trigger at 3:00 PM Sydney time.
-    - cron: '0 4 * * 1,3,5'
+    # - cron: '0 4 * * 1,3,5'
 
 jobs:
   run-script:
